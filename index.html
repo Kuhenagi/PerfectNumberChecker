@@ -1,41 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>完全数判定機くん</title>
+    <title>メルセンヌ素数メーカー</title>
 </head>
 <body>
-    <h1>完全数判定</h1>
-    <p>整数を入力してください:</p>
+    <h1>メルセンヌ素数メーカー</h1>
+    <p>(2^N-1における)Nを入力してください:</p>
     <input type="number" id="inputNumber">
-    <button onclick="checkPerfectNumber()">判定</button>
+    <button onclick="checkMersennePrime()">判定</button>
     <p id="result"></p>
 
     <script>
-        function checkPerfectNumber() {
-            // 入力された数を取得
-            const inputNumber = parseInt(document.getElementById('inputNumber').value);
+        var Mersenne = 0;
+        function isPrime(number) {
+            if (number <= 1) {
+                return false; // 1以下の数は素数ではない
+            }
+            if (number <= 3) {
+                return true; // 2と3は素数
+            }
+            if (number % 2 === 0 || number % 3 === 0) {
+                return false; // 2または3で割り切れる数は素数ではない
+            }
 
-            // 入力が正の整数でない場合のエラーチェック
-            if (isNaN(inputNumber) || inputNumber <= 0) {
-                document.getElementById('result').textContent = "正の整数を入力してください。";
+            let i = 5;
+            while (i * i <= number) {
+                if (number % i === 0 || number % (i + 2) === 0) {
+                    return false; // 5以上の数で、iまたは(i + 2)で割り切れる数は素数ではない
+                }
+                i += 6; // 6k ± 1の形式でのみ素数を検査する
+            }
+
+            return true;
+        }
+
+        function checkMersennePrime() {
+            const inputElement = document.getElementById("inputNumber");
+            const resultElement = document.getElementById("result");
+
+            const number = Math.pow(2, parseInt(inputElement.value))-1;
+
+            if (isNaN(number) || number <= 0) {
+                resultElement.textContent = "正の整数を入力してください。";
                 return;
             }
 
-            // 約数の合計を計算
-            let sum = 0;
-            for (let i = 1; i < inputNumber; i++) {
-                if (inputNumber % i === 0) {
-                    sum += i;
-                }
-            }
-
-            // 完全数かどうかを判定
-            if (sum === inputNumber) {
-                document.getElementById('result').textContent = inputNumber + " は完全数です！";
+            if(isPrime(number)) {
+                var x = Math.pow(2, (parseInt(inputElement.value)-1)) * (Math.pow(2, parseInt(inputElement.value))-1);
+                resultElement.textContent = `${number} はメルセンヌ素数です。\n対応する完全数は${x}`;
             } else {
-                document.getElementById('result').textContent = inputNumber + " は完全数ではありません。";
+                resultElement.textContent = `${number} はメルセンヌ素数ではありません。`
             }
         }
+        function isPerfectNumber(number) {
+    let sum = 0;
+    for (let i = 1; i < number; i++) {
+        if (number % i === 0) {
+            sum += i;
+        }
+    }
+    return sum === number;
+}
     </script>
 </body>
 </html>
